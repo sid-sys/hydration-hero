@@ -75,7 +75,7 @@ export default function SettingsPage({ settings, updateSettings, resetProgress }
           {INTERVALS.map(h => (
             <button
               key={h}
-              onClick={() => updateSettings({ reminderInterval: h })}
+              onClick={() => { updateSettings({ reminderInterval: h }); scheduleReminders(h); }}
               className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all border ${
                 settings.reminderInterval === h
                   ? "bg-secondary text-secondary-foreground border-secondary shadow-md"
