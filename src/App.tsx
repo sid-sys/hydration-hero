@@ -24,6 +24,10 @@ function AppContent() {
   const store = useWaterStore();
   const [profile, setProfile] = useState<UserProfile>(loadProfile);
 
+  useEffect(() => {
+    setupNotificationActions();
+  }, []);
+
   const updateProfile = useCallback((updates: Partial<UserProfile>) => {
     setProfile(prev => {
       const next = { ...prev, ...updates };
