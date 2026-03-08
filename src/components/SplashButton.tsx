@@ -93,7 +93,7 @@ export function SplashButton({ onClick }: SplashButtonProps) {
       </AnimatePresence>
 
       <Droplets size={24} />
-      Drink {cupLabel}
+      Drink 1 Glass
     </motion.button>
   );
 }

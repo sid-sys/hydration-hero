@@ -52,7 +52,7 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
         <CircularProgress progress={progress} glasses={todayGlasses} goal={settings.dailyGoal} />
       </div>
 
-      <SplashButton onClick={handleDrink} cupLabel={CUP_LABELS[settings.cupSize] || "1 Cup"} />
+      <SplashButton onClick={handleDrink} />
 
       <AnimatePresence>
         {goalMet && (
