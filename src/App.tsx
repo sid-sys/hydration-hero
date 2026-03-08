@@ -55,9 +55,9 @@ function AppContent() {
     <div className="min-h-screen bg-background">
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2, ease: "easeOut" }}><HomePage {...store} userName={profile.name} /></motion.div>} />
+          <Route path="/" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2, ease: "easeOut" }}><HomePage {...store} userName={profile.name} lastDrinkTime={store.lastDrinkTime} /></motion.div>} />
           <Route path="/streaks" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2, ease: "easeOut" }}><StreaksPage streak={store.streak} bestStreak={store.bestStreak} level={store.level} badges={store.badges} history={store.history} /></motion.div>} />
-          <Route path="/history" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2, ease: "easeOut" }}><HistoryPage history={store.history} todayGlasses={store.todayGlasses} todayDate={store.todayDate} bestStreak={store.bestStreak} totalGlasses={store.totalGlasses} settings={store.settings} /></motion.div>} />
+          <Route path="/history" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2, ease: "easeOut" }}><HistoryPage history={store.history} todayGlasses={store.todayGlasses} todayDate={store.todayDate} bestStreak={store.bestStreak} totalGlasses={store.totalGlasses} settings={store.settings} drinkLog={store.drinkLog} /></motion.div>} />
           <Route path="/settings" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2, ease: "easeOut" }}><SettingsPage settings={store.settings} updateSettings={store.updateSettings} resetProgress={store.resetProgress} profile={profile} updateProfile={updateProfile} /></motion.div>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
