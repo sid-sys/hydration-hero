@@ -30,6 +30,7 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
     if (goalMet && !prevGoalMet.current) {
       confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ["#4ade80", "#38bdf8", "#fbbf24", "#f472b6"] });
       playGoalSound();
+      triggerHaptic();
     }
     prevGoalMet.current = goalMet;
   }, [goalMet]);
@@ -41,6 +42,7 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
     if (result.streakMilestone) {
       setTimeout(() => {
         confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 }, colors: ["#f97316", "#eab308", "#ef4444", "#fbbf24"] });
+        triggerHaptic();
         toast(`🔥 ${result.streakMilestone}-Day Streak Milestone!`, {
           description: "You're on fire! Keep it going!",
         });
