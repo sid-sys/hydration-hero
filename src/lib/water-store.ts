@@ -150,14 +150,19 @@ export function useWaterStore() {
   const drinkWater = useCallback(() => {
     setState(prev => {
       const next = { ...prev };
+      const alreadyMetGoal = next.todayGlasses >= next.settings.dailyGoal;
       next.todayGlasses += 1;
       next.totalGlasses += 1;
-      next.xp += 10;
 
-      // Level up check
-      while (next.xp >= xpForLevel(next.level)) {
-        next.xp -= xpForLevel(next.level);
-        next.level += 1;
+      // Only award XP if goal not yet met
+      if (!alreadyMetGoal) {
+        next.xp += 10;
+
+        // Level up check
+        while (next.xp >= xpForLevel(next.level)) {
+          next.xp -= xpForLevel(next.level);
+          next.level += 1;
+        }
       }
 
       // Check badges
