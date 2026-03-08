@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Droplets } from "lucide-react";
-import { useState, useCallback } from "react";
+import { Droplets, Clock } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+import { isOnCooldown, getCooldownRemaining } from "@/lib/water-store";
 
 interface Ripple {
   id: number;
@@ -10,16 +11,32 @@ interface Ripple {
 
 interface SplashButtonProps {
   onClick: () => void;
+  lastDrinkTime: string | null;
 }
 
 let rippleId = 0;
 
-export function SplashButton({ onClick }: SplashButtonProps) {
+export function SplashButton({ onClick, lastDrinkTime }: SplashButtonProps) {
   const [ripples, setRipples] = useState<Ripple[]>([]);
   const [splashes, setSplashes] = useState<number[]>([]);
+  const [cooldownMs, setCooldownMs] = useState(() => getCooldownRemaining(lastDrinkTime));
+
+  useEffect(() => {
+    const tick = () => setCooldownMs(getCooldownRemaining(lastDrinkTime));
+    tick();
+    if (!isOnCooldown(lastDrinkTime)) return;
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [lastDrinkTime]);
+
+  const onCooldown = cooldownMs > 0;
+  const cooldownMin = Math.ceil(cooldownMs / 60000);
+  const cooldownSec = Math.ceil(cooldownMs / 1000) % 60;
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (onCooldown) return;
+
       const rect = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -36,15 +53,26 @@ export function SplashButton({ onClick }: SplashButtonProps) {
 
       onClick();
     },
-    [onClick]
+    [onClick, onCooldown]
   );
+
+  const formatCooldown = () => {
+    const m = Math.floor(cooldownMs / 60000);
+    const s = Math.ceil((cooldownMs % 60000) / 1000);
+    return `${m}:${String(s).padStart(2, "0")}`;
+  };
 
   return (
     <motion.button
-      whileTap={{ scale: 0.9 }}
-      whileHover={{ scale: 1.05 }}
+      whileTap={onCooldown ? {} : { scale: 0.9 }}
+      whileHover={onCooldown ? {} : { scale: 1.05 }}
       onClick={handleClick}
-      className="relative mt-6 flex items-center gap-2 overflow-hidden rounded-full bg-secondary px-8 py-4 font-display text-lg font-bold text-secondary-foreground shadow-lg active:shadow-md transition-shadow"
+      disabled={onCooldown}
+      className={`relative mt-6 flex items-center gap-2 overflow-hidden rounded-full px-8 py-4 font-display text-lg font-bold shadow-lg transition-all ${
+        onCooldown
+          ? "bg-muted text-muted-foreground cursor-not-allowed opacity-70"
+          : "bg-secondary text-secondary-foreground active:shadow-md"
+      }`}
     >
       {/* Ripple effects */}
       <AnimatePresence>
@@ -92,8 +120,17 @@ export function SplashButton({ onClick }: SplashButtonProps) {
         ))}
       </AnimatePresence>
 
-      <Droplets size={24} />
-      Drink 1 Glass
+      {onCooldown ? (
+        <>
+          <Clock size={20} />
+          <span className="text-base">Wait {formatCooldown()}</span>
+        </>
+      ) : (
+        <>
+          <Droplets size={24} />
+          Drink 1 Glass
+        </>
+      )}
     </motion.button>
   );
 }

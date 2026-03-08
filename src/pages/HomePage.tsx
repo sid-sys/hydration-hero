@@ -7,6 +7,7 @@ import { getPlantStage, xpForLevel } from "@/lib/water-store";
 import { playDrinkSound, playGoalSound } from "@/lib/sounds";
 import confetti from "canvas-confetti";
 import { useEffect, useRef, useCallback } from "react";
+import { toast } from "sonner";
 
 interface HomePageProps {
   todayGlasses: number;
@@ -16,11 +17,12 @@ interface HomePageProps {
   streak: number;
   level: number;
   xp: number;
-  drinkWater: () => void;
+  drinkWater: () => { streakMilestone: number | null };
   userName?: string;
+  lastDrinkTime: string | null;
 }
 
-export default function HomePage({ todayGlasses, settings, progress, goalMet, streak, level, xp, drinkWater, userName }: HomePageProps) {
+export default function HomePage({ todayGlasses, settings, progress, goalMet, streak, level, xp, drinkWater, userName, lastDrinkTime }: HomePageProps) {
   const prevGoalMet = useRef(goalMet);
 
   useEffect(() => {
@@ -33,7 +35,15 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
 
   const handleDrink = useCallback(() => {
     playDrinkSound();
-    drinkWater();
+    const result = drinkWater();
+    if (result.streakMilestone) {
+      setTimeout(() => {
+        confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 }, colors: ["#f97316", "#eab308", "#ef4444", "#fbbf24"] });
+        toast(`🔥 ${result.streakMilestone}-Day Streak Milestone!`, {
+          description: "You're on fire! Keep it going!",
+        });
+      }, 300);
+    }
   }, [drinkWater]);
 
   const stage = getPlantStage(todayGlasses, settings.dailyGoal);
@@ -52,7 +62,7 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
         <CircularProgress progress={progress} glasses={todayGlasses} goal={settings.dailyGoal} />
       </div>
 
-      <SplashButton onClick={handleDrink} />
+      <SplashButton onClick={handleDrink} lastDrinkTime={lastDrinkTime} />
 
       <AnimatePresence>
         {goalMet && (

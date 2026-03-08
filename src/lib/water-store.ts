@@ -7,6 +7,12 @@ export interface DayRecord {
   goalMet: boolean;
 }
 
+export interface DrinkEvent {
+  id: string;
+  timestamp: string; // ISO string
+  date: string; // YYYY-MM-DD
+}
+
 export interface Badge {
   id: string;
   name: string;
@@ -41,9 +47,11 @@ export interface WaterState {
   badges: Badge[];
   garden: PlantEntry[];
   settings: WaterSettings;
+  drinkLog: DrinkEvent[];
+  lastDrinkTime: string | null; // ISO string for cooldown
 }
 
-const CUP_ML: Record<string, number> = { small: 150, medium: 250, large: 350 };
+const STREAK_MILESTONES = [3, 7, 14, 21, 30, 50, 100];
 
 const DEFAULT_BADGES: Badge[] = [
   { id: "first_sip", name: "First Sip", description: "Log your first glass", icon: "💧", earned: false },
@@ -57,6 +65,7 @@ const DEFAULT_BADGES: Badge[] = [
 ];
 
 const STORAGE_KEY = "water_reminder_state";
+const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
 function getToday(): string {
   return new Date().toISOString().split("T")[0];
@@ -75,6 +84,8 @@ function getDefaultState(): WaterState {
     badges: [...DEFAULT_BADGES],
     garden: [],
     settings: { dailyGoal: 8, cupSize: "medium", reminderInterval: 2 },
+    drinkLog: [],
+    lastDrinkTime: null,
   };
 }
 
@@ -83,10 +94,12 @@ function loadState(): WaterState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return getDefaultState();
     const state = JSON.parse(raw) as WaterState;
+    // Ensure new fields
+    if (!state.drinkLog) state.drinkLog = [];
+    if (!state.lastDrinkTime) state.lastDrinkTime = null;
     // Check if day changed
     const today = getToday();
     if (state.todayDate !== today) {
-      // Finalize previous day
       const prevGoalMet = state.todayGlasses >= state.settings.dailyGoal;
       state.history.push({
         date: state.todayDate,
@@ -96,7 +109,6 @@ function loadState(): WaterState {
       if (prevGoalMet) {
         state.streak += 1;
         state.bestStreak = Math.max(state.bestStreak, state.streak);
-        // Add plant to garden
         state.garden.push({
           id: `plant_${state.todayDate}`,
           name: `Plant ${state.garden.length + 1}`,
@@ -109,7 +121,6 @@ function loadState(): WaterState {
       state.todayGlasses = 0;
       state.todayDate = today;
     }
-    // Ensure badges exist
     if (!state.badges || state.badges.length < DEFAULT_BADGES.length) {
       state.badges = DEFAULT_BADGES.map(b => {
         const existing = state.badges?.find(e => e.id === b.id);
@@ -140,6 +151,19 @@ export function getPlantStage(glasses: number, goal: number): number {
   return 5;
 }
 
+export function isOnCooldown(lastDrinkTime: string | null): boolean {
+  if (!lastDrinkTime) return false;
+  return Date.now() - new Date(lastDrinkTime).getTime() < COOLDOWN_MS;
+}
+
+export function getCooldownRemaining(lastDrinkTime: string | null): number {
+  if (!lastDrinkTime) return 0;
+  const elapsed = Date.now() - new Date(lastDrinkTime).getTime();
+  return Math.max(0, COOLDOWN_MS - elapsed);
+}
+
+export { STREAK_MILESTONES };
+
 export function useWaterStore() {
   const [state, setState] = useState<WaterState>(loadState);
 
@@ -147,21 +171,44 @@ export function useWaterStore() {
     saveState(state);
   }, [state]);
 
-  const drinkWater = useCallback(() => {
+  const drinkWater = useCallback((): { streakMilestone: number | null } => {
+    let milestone: number | null = null;
+
     setState(prev => {
+      // Check cooldown
+      if (isOnCooldown(prev.lastDrinkTime)) return prev;
+
       const next = { ...prev };
       const alreadyMetGoal = next.todayGlasses >= next.settings.dailyGoal;
       next.todayGlasses += 1;
       next.totalGlasses += 1;
+      next.lastDrinkTime = new Date().toISOString();
+
+      // Add drink event to log
+      next.drinkLog = [...next.drinkLog, {
+        id: `drink_${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        date: getToday(),
+      }];
 
       // Only award XP if goal not yet met
       if (!alreadyMetGoal) {
         next.xp += 10;
-
-        // Level up check
         while (next.xp >= xpForLevel(next.level)) {
           next.xp -= xpForLevel(next.level);
           next.level += 1;
+        }
+      }
+
+      // Check if just met goal - check for streak milestone
+      if (!alreadyMetGoal && next.todayGlasses >= next.settings.dailyGoal) {
+        const newStreak = next.streak + 1; // Will be applied on day change, but check current
+        // Check current streak (streak increments on day change, so check streak+1 for "today completing")
+        for (const m of STREAK_MILESTONES) {
+          if (next.streak + 1 === m || next.streak === m) {
+            milestone = m;
+            break;
+          }
         }
       }
 
@@ -179,6 +226,8 @@ export function useWaterStore() {
 
       return next;
     });
+
+    return { streakMilestone: milestone };
   }, []);
 
   const updateSettings = useCallback((settings: Partial<WaterSettings>) => {
