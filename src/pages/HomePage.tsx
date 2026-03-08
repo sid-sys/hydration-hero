@@ -30,6 +30,7 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
     if (goalMet && !prevGoalMet.current) {
       confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ["#4ade80", "#38bdf8", "#fbbf24", "#f472b6"] });
       playGoalSound();
+      triggerHaptic();
     }
     prevGoalMet.current = goalMet;
   }, [goalMet]);
