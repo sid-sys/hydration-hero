@@ -17,9 +17,10 @@ interface HomePageProps {
   level: number;
   xp: number;
   drinkWater: () => void;
+  userName?: string;
 }
 
-export default function HomePage({ todayGlasses, settings, progress, goalMet, streak, level, xp, drinkWater }: HomePageProps) {
+export default function HomePage({ todayGlasses, settings, progress, goalMet, streak, level, xp, drinkWater, userName }: HomePageProps) {
   const prevGoalMet = useRef(goalMet);
 
   useEffect(() => {
