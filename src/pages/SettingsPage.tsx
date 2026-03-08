@@ -1,13 +1,17 @@
 import { Minus, Plus, RotateCcw } from "lucide-react";
 import type { WaterSettings } from "@/lib/water-store";
+import type { UserProfile } from "@/lib/user-profile";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { scheduleReminders } from "@/lib/notifications";
+import { scheduleReminders, scheduleWeeklySummary } from "@/lib/notifications";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface SettingsPageProps {
   settings: WaterSettings;
   updateSettings: (s: Partial<WaterSettings>) => void;
   resetProgress: () => void;
+  profile: UserProfile;
+  updateProfile: (p: Partial<UserProfile>) => void;
 }
 
 const CUP_SIZES: { value: WaterSettings["cupSize"]; label: string; ml: number }[] = [
@@ -16,14 +20,23 @@ const CUP_SIZES: { value: WaterSettings["cupSize"]; label: string; ml: number }[
   { value: "large", label: "Large", ml: 350 },
 ];
 
-const INTERVALS = [1, 1.5, 2, 3, 4];
+const INTERVALS = [0.5, 1, 1.5, 2, 3];
 
-export default function SettingsPage({ settings, updateSettings, resetProgress }: SettingsPageProps) {
+export default function SettingsPage({ settings, updateSettings, resetProgress, profile, updateProfile }: SettingsPageProps) {
   const [showReset, setShowReset] = useState(false);
 
   return (
     <div className="px-4 pt-6 pb-24 max-w-md mx-auto">
       <h1 className="font-display text-2xl font-bold text-foreground mb-6">Settings ⚙️</h1>
+
+      {/* Theme */}
+      <div className="rounded-2xl bg-card border border-border p-5 mb-4">
+        <h2 className="font-display font-bold text-sm mb-3 text-foreground">Appearance</h2>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">Dark Mode</span>
+          <ThemeToggle />
+        </div>
+      </div>
 
       {/* Daily Goal */}
       <div className="rounded-2xl bg-card border border-border p-5 mb-4">
@@ -68,21 +81,46 @@ export default function SettingsPage({ settings, updateSettings, resetProgress }
         </div>
       </div>
 
-      {/* Reminder Interval */}
+      {/* Schedule */}
       <div className="rounded-2xl bg-card border border-border p-5 mb-4">
-        <h2 className="font-display font-bold text-sm mb-3 text-foreground">Reminder Interval</h2>
+        <h2 className="font-display font-bold text-sm mb-3 text-foreground">Notification Schedule</h2>
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          <div>
+            <label className="text-xs text-muted-foreground block mb-1">🌅 Wake Time</label>
+            <input
+              type="time"
+              value={profile.wakeTime}
+              onChange={(e) => updateProfile({ wakeTime: e.target.value })}
+              className="w-full rounded-xl border border-border bg-muted px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground block mb-1">🌙 Bed Time</label>
+            <input
+              type="time"
+              value={profile.bedTime}
+              onChange={(e) => updateProfile({ bedTime: e.target.value })}
+              className="w-full rounded-xl border border-border bg-muted px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+        </div>
+        <h2 className="font-display font-bold text-sm mb-2 text-foreground">Reminder Frequency</h2>
         <div className="flex gap-2 flex-wrap">
           {INTERVALS.map(h => (
             <button
               key={h}
-              onClick={() => { updateSettings({ reminderInterval: h }); scheduleReminders(h); }}
+              onClick={() => {
+                updateProfile({ notificationFrequency: h });
+                scheduleReminders(h, profile.wakeTime, profile.bedTime, profile.name);
+                scheduleWeeklySummary(profile.name);
+              }}
               className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all border ${
-                settings.reminderInterval === h
+                profile.notificationFrequency === h
                   ? "bg-secondary text-secondary-foreground border-secondary shadow-md"
                   : "bg-muted text-muted-foreground border-border"
               }`}
             >
-              {h}h
+              {h < 1 ? `${h * 60}m` : `${h}h`}
             </button>
           ))}
         </div>
