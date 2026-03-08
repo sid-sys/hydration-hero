@@ -5,6 +5,7 @@ import { CircularProgress } from "@/components/CircularProgress";
 import { SplashButton } from "@/components/SplashButton";
 import { getPlantStage, xpForLevel } from "@/lib/water-store";
 import { playDrinkSound, playGoalSound } from "@/lib/sounds";
+import { triggerHaptic } from "@/lib/haptics";
 import confetti from "canvas-confetti";
 import { useEffect, useRef, useCallback } from "react";
 import { toast } from "sonner";
