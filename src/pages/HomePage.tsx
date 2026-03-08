@@ -17,9 +17,10 @@ interface HomePageProps {
   level: number;
   xp: number;
   drinkWater: () => void;
+  userName?: string;
 }
 
-export default function HomePage({ todayGlasses, settings, progress, goalMet, streak, level, xp, drinkWater }: HomePageProps) {
+export default function HomePage({ todayGlasses, settings, progress, goalMet, streak, level, xp, drinkWater, userName }: HomePageProps) {
   const prevGoalMet = useRef(goalMet);
 
   useEffect(() => {
@@ -40,7 +41,9 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
 
   return (
     <div className="flex flex-col items-center px-4 pt-6 pb-24">
-      <h1 className="font-display text-2xl font-bold text-foreground mb-1">Stay Hydrated! 💧</h1>
+      <h1 className="font-display text-2xl font-bold text-foreground mb-1">
+        {userName ? `Hey ${userName}! 💧` : "Stay Hydrated! 💧"}
+      </h1>
       <p className="text-sm text-muted-foreground mb-4">Your plant is {goalMet ? "thriving!" : "thirsty..."}</p>
 
       <PlantMascot stage={stage} goalMet={goalMet} />
