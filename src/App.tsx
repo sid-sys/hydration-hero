@@ -8,7 +8,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { useWaterStore } from "@/lib/water-store";
 import { loadProfile, saveProfile, UserProfile } from "@/lib/user-profile";
 import { scheduleReminders, scheduleWeeklySummary, setupNotificationActions } from "@/lib/notifications";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import HomePage from "./pages/HomePage";
 import StreaksPage from "./pages/StreaksPage";
