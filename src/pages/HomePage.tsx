@@ -36,6 +36,7 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
 
   const handleDrink = useCallback(() => {
     playDrinkSound();
+    triggerHaptic();
     const result = drinkWater();
     if (result.streakMilestone) {
       setTimeout(() => {
