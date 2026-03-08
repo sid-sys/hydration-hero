@@ -2,6 +2,7 @@ import { Minus, Plus, RotateCcw } from "lucide-react";
 import type { WaterSettings } from "@/lib/water-store";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { scheduleReminders } from "@/lib/notifications";
 
 interface SettingsPageProps {
   settings: WaterSettings;
