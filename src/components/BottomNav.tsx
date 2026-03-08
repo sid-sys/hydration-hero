@@ -1,5 +1,6 @@
 import { Home, Trophy, BarChart3, Settings } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const tabs = [
@@ -23,12 +24,24 @@ export function BottomNav() {
               key={path}
               onClick={() => navigate(path)}
               className={cn(
-                "flex flex-col items-center gap-0.5 rounded-xl px-4 py-1.5 transition-colors",
+                "relative flex flex-col items-center gap-0.5 rounded-xl px-4 py-1.5 transition-colors",
                 active ? "text-primary" : "text-muted-foreground"
               )}
             >
-              <Icon size={22} strokeWidth={active ? 2.5 : 2} />
-              <span className="text-[10px] font-semibold">{label}</span>
+              {active && (
+                <motion.div
+                  layoutId="nav-indicator"
+                  className="absolute inset-0 rounded-xl bg-primary/10"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+              <motion.div
+                animate={active ? { scale: 1.15, y: -2 } : { scale: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              >
+                <Icon size={22} strokeWidth={active ? 2.5 : 2} />
+              </motion.div>
+              <span className="relative text-[10px] font-semibold">{label}</span>
             </button>
           );
         })}
