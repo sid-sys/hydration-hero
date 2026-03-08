@@ -1,10 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Droplets, Flame, Star } from "lucide-react";
+import { Flame, Star } from "lucide-react";
 import { PlantMascot } from "@/components/PlantMascot";
 import { CircularProgress } from "@/components/CircularProgress";
+import { SplashButton } from "@/components/SplashButton";
 import { getPlantStage, xpForLevel } from "@/lib/water-store";
+import { playDrinkSound, playGoalSound } from "@/lib/sounds";
 import confetti from "canvas-confetti";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 interface HomePageProps {
   todayGlasses: number;
@@ -23,37 +25,31 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
   useEffect(() => {
     if (goalMet && !prevGoalMet.current) {
       confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ["#4ade80", "#38bdf8", "#fbbf24", "#f472b6"] });
+      playGoalSound();
     }
     prevGoalMet.current = goalMet;
   }, [goalMet]);
+
+  const handleDrink = useCallback(() => {
+    playDrinkSound();
+    drinkWater();
+  }, [drinkWater]);
 
   const stage = getPlantStage(todayGlasses, settings.dailyGoal);
   const xpNeeded = xpForLevel(level);
 
   return (
     <div className="flex flex-col items-center px-4 pt-6 pb-24">
-      {/* Header */}
       <h1 className="font-display text-2xl font-bold text-foreground mb-1">Stay Hydrated! 💧</h1>
       <p className="text-sm text-muted-foreground mb-4">Your plant is {goalMet ? "thriving!" : "thirsty..."}</p>
 
-      {/* Plant */}
       <PlantMascot stage={stage} goalMet={goalMet} />
 
-      {/* Progress Ring */}
       <div className="mt-4">
         <CircularProgress progress={progress} glasses={todayGlasses} goal={settings.dailyGoal} />
       </div>
 
-      {/* Drink Button */}
-      <motion.button
-        whileTap={{ scale: 0.9 }}
-        whileHover={{ scale: 1.05 }}
-        onClick={drinkWater}
-        className="mt-6 flex items-center gap-2 rounded-full bg-secondary px-8 py-4 font-display text-lg font-bold text-secondary-foreground shadow-lg active:shadow-md transition-shadow"
-      >
-        <Droplets size={24} />
-        Drink Water
-      </motion.button>
+      <SplashButton onClick={handleDrink} />
 
       <AnimatePresence>
         {goalMet && (
@@ -67,7 +63,6 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
         )}
       </AnimatePresence>
 
-      {/* Quick Stats */}
       <div className="mt-6 grid w-full max-w-xs grid-cols-3 gap-3">
         <div className="flex flex-col items-center rounded-2xl bg-card p-3 shadow-sm border border-border">
           <Flame size={20} className="text-coral mb-1" />

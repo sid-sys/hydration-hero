@@ -2,6 +2,7 @@ import { Minus, Plus, RotateCcw } from "lucide-react";
 import type { WaterSettings } from "@/lib/water-store";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { scheduleReminders } from "@/lib/notifications";
 
 interface SettingsPageProps {
   settings: WaterSettings;
@@ -74,7 +75,7 @@ export default function SettingsPage({ settings, updateSettings, resetProgress }
           {INTERVALS.map(h => (
             <button
               key={h}
-              onClick={() => updateSettings({ reminderInterval: h })}
+              onClick={() => { updateSettings({ reminderInterval: h }); scheduleReminders(h); }}
               className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all border ${
                 settings.reminderInterval === h
                   ? "bg-secondary text-secondary-foreground border-secondary shadow-md"
@@ -85,7 +86,7 @@ export default function SettingsPage({ settings, updateSettings, resetProgress }
             </button>
           ))}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">Notifications require Capacitor native build</p>
+        <p className="text-[10px] text-muted-foreground mt-2">Notifications work on native builds (iOS/Android)</p>
       </div>
 
       {/* Reset */}
