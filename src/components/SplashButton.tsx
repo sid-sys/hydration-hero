@@ -10,11 +10,12 @@ interface Ripple {
 
 interface SplashButtonProps {
   onClick: () => void;
+  cupLabel?: string;
 }
 
 let rippleId = 0;
 
-export function SplashButton({ onClick }: SplashButtonProps) {
+export function SplashButton({ onClick, cupLabel = "1 Cup" }: SplashButtonProps) {
   const [ripples, setRipples] = useState<Ripple[]>([]);
   const [splashes, setSplashes] = useState<number[]>([]);
 
@@ -93,7 +94,7 @@ export function SplashButton({ onClick }: SplashButtonProps) {
       </AnimatePresence>
 
       <Droplets size={24} />
-      Drink Water
+      Drink {cupLabel}
     </motion.button>
   );
 }

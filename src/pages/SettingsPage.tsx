@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { scheduleReminders, scheduleWeeklySummary } from "@/lib/notifications";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { toast } from "sonner";
 
 interface SettingsPageProps {
   settings: WaterSettings;
@@ -14,10 +15,10 @@ interface SettingsPageProps {
   updateProfile: (p: Partial<UserProfile>) => void;
 }
 
-const CUP_SIZES: { value: WaterSettings["cupSize"]; label: string; ml: number }[] = [
-  { value: "small", label: "Small", ml: 150 },
-  { value: "medium", label: "Medium", ml: 250 },
-  { value: "large", label: "Large", ml: 350 },
+const CUP_SIZES: { value: WaterSettings["cupSize"]; label: string }[] = [
+  { value: "small", label: "1 Cup" },
+  { value: "medium", label: "2 Cups" },
+  { value: "large", label: "3 Cups" },
 ];
 
 const INTERVALS = [0.5, 1, 1.5, 2, 3];
@@ -43,14 +44,14 @@ export default function SettingsPage({ settings, updateSettings, resetProgress, 
         <h2 className="font-display font-bold text-sm mb-3 text-foreground">Daily Goal</h2>
         <div className="flex items-center justify-center gap-4">
           <button
-            onClick={() => updateSettings({ dailyGoal: Math.max(1, settings.dailyGoal - 1) })}
+            onClick={() => { updateSettings({ dailyGoal: Math.max(1, settings.dailyGoal - 1) }); toast.success("Daily goal updated! 🎯"); }}
             className="rounded-full bg-muted p-2 active:scale-90 transition-transform"
           >
             <Minus size={18} />
           </button>
           <span className="font-display text-3xl font-bold text-primary w-16 text-center">{settings.dailyGoal}</span>
           <button
-            onClick={() => updateSettings({ dailyGoal: settings.dailyGoal + 1 })}
+            onClick={() => { updateSettings({ dailyGoal: settings.dailyGoal + 1 }); toast.success("Daily goal updated! 🎯"); }}
             className="rounded-full bg-muted p-2 active:scale-90 transition-transform"
           >
             <Plus size={18} />
@@ -66,7 +67,7 @@ export default function SettingsPage({ settings, updateSettings, resetProgress, 
           {CUP_SIZES.map(cup => (
             <button
               key={cup.value}
-              onClick={() => updateSettings({ cupSize: cup.value })}
+              onClick={() => { updateSettings({ cupSize: cup.value }); toast.success(`Cup size set to ${cup.label} 🥤`); }}
               className={`flex-1 rounded-xl py-3 text-center font-semibold text-sm transition-all border ${
                 settings.cupSize === cup.value
                   ? "bg-primary text-primary-foreground border-primary shadow-md"
@@ -74,8 +75,6 @@ export default function SettingsPage({ settings, updateSettings, resetProgress, 
               }`}
             >
               {cup.label}
-              <br />
-              <span className="text-[10px] opacity-75">{cup.ml}ml</span>
             </button>
           ))}
         </div>
@@ -90,7 +89,7 @@ export default function SettingsPage({ settings, updateSettings, resetProgress, 
             <input
               type="time"
               value={profile.wakeTime}
-              onChange={(e) => updateProfile({ wakeTime: e.target.value })}
+              onChange={(e) => { updateProfile({ wakeTime: e.target.value }); toast.success("Wake time updated! 🌅"); }}
               className="w-full rounded-xl border border-border bg-muted px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
@@ -99,7 +98,7 @@ export default function SettingsPage({ settings, updateSettings, resetProgress, 
             <input
               type="time"
               value={profile.bedTime}
-              onChange={(e) => updateProfile({ bedTime: e.target.value })}
+              onChange={(e) => { updateProfile({ bedTime: e.target.value }); toast.success("Bed time updated! 🌙"); }}
               className="w-full rounded-xl border border-border bg-muted px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
@@ -113,6 +112,7 @@ export default function SettingsPage({ settings, updateSettings, resetProgress, 
                 updateProfile({ notificationFrequency: h });
                 scheduleReminders(h, profile.wakeTime, profile.bedTime, profile.name);
                 scheduleWeeklySummary(profile.name);
+                toast.success(`Reminders set to every ${h < 1 ? `${h * 60} minutes` : `${h} hour${h > 1 ? 's' : ''}`} ⏰`);
               }}
               className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all border ${
                 profile.notificationFrequency === h
@@ -136,7 +136,7 @@ export default function SettingsPage({ settings, updateSettings, resetProgress, 
           </Button>
         ) : (
           <div className="flex gap-2">
-            <Button variant="destructive" size="sm" onClick={() => { resetProgress(); setShowReset(false); }}>
+            <Button variant="destructive" size="sm" onClick={() => { resetProgress(); setShowReset(false); toast.success("All progress has been reset 🔄"); }}>
               Confirm Reset
             </Button>
             <Button variant="ghost" size="sm" onClick={() => setShowReset(false)}>Cancel</Button>
