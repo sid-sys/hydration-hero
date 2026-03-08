@@ -86,7 +86,7 @@ export default function SettingsPage({ settings, updateSettings, resetProgress }
             </button>
           ))}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">Notifications require Capacitor native build</p>
+        <p className="text-[10px] text-muted-foreground mt-2">Notifications work on native builds (iOS/Android)</p>
       </div>
 
       {/* Reset */}
