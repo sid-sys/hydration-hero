@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 function AppContent() {
+  const location = useLocation();
   const store = useWaterStore();
   const [profile, setProfile] = useState<UserProfile>(loadProfile);
 
