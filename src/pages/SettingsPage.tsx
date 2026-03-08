@@ -54,25 +54,6 @@ export default function SettingsPage({ settings, updateSettings, resetProgress, 
         <p className="text-center text-xs text-muted-foreground mt-1">glasses per day</p>
       </div>
 
-      {/* Cup Size */}
-      <div className="rounded-2xl bg-card border border-border p-5 mb-4">
-        <h2 className="font-display font-bold text-sm mb-3 text-foreground">Cup Size</h2>
-        <div className="flex gap-2">
-          {CUP_SIZES.map(cup => (
-            <button
-              key={cup.value}
-              onClick={() => { updateSettings({ cupSize: cup.value }); toast.success(`Cup size set to ${cup.label} 🥤`); }}
-              className={`flex-1 rounded-xl py-3 text-center font-semibold text-sm transition-all border ${
-                settings.cupSize === cup.value
-                  ? "bg-primary text-primary-foreground border-primary shadow-md"
-                  : "bg-muted text-muted-foreground border-border"
-              }`}
-            >
-              {cup.label}
-            </button>
-          ))}
-        </div>
-      </div>
 
       {/* Schedule */}
       <div className="rounded-2xl bg-card border border-border p-5 mb-4">
