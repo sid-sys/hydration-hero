@@ -15,12 +15,6 @@ interface SettingsPageProps {
   updateProfile: (p: Partial<UserProfile>) => void;
 }
 
-const CUP_SIZES: { value: WaterSettings["cupSize"]; label: string }[] = [
-  { value: "small", label: "1 Cup" },
-  { value: "medium", label: "2 Cups" },
-  { value: "large", label: "3 Cups" },
-];
-
 const INTERVALS = [0.5, 1, 1.5, 2, 3];
 
 export default function SettingsPage({ settings, updateSettings, resetProgress, profile, updateProfile }: SettingsPageProps) {
