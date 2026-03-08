@@ -8,9 +8,11 @@ import { playDrinkSound, playGoalSound } from "@/lib/sounds";
 import confetti from "canvas-confetti";
 import { useEffect, useRef, useCallback } from "react";
 
+const CUP_LABELS: Record<string, string> = { small: "1 Cup", medium: "2 Cups", large: "3 Cups" };
+
 interface HomePageProps {
   todayGlasses: number;
-  settings: { dailyGoal: number };
+  settings: { dailyGoal: number; cupSize: string };
   progress: number;
   goalMet: boolean;
   streak: number;
