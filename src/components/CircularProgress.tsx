@@ -11,11 +11,17 @@ export function CircularProgress({ progress, glasses, goal }: CircularProgressPr
   const stroke = 12;
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference * (1 - Math.min(progress, 1));
+  const goalMet = glasses >= goal;
+  const clampedProgress = Math.min(progress, 1);
+  const offset = circumference * (1 - clampedProgress);
+
+  // Extra glasses beyond goal
+  const extraGlasses = goalMet ? glasses - goal : 0;
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
+        {/* Background track */}
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -24,12 +30,13 @@ export function CircularProgress({ progress, glasses, goal }: CircularProgressPr
           stroke="hsl(var(--water-light))"
           strokeWidth={stroke}
         />
+        {/* Main progress (water color) */}
         <motion.circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="hsl(var(--water))"
+          stroke={goalMet ? "hsl(var(--sunshine))" : "hsl(var(--water))"}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -39,8 +46,18 @@ export function CircularProgress({ progress, glasses, goal }: CircularProgressPr
         />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="text-3xl font-display font-bold text-foreground">{glasses}</span>
-        <span className="text-sm font-body text-muted-foreground">/ {goal} glasses</span>
+        {goalMet ? (
+          <>
+            <span className="text-3xl font-display font-bold text-sunshine">{glasses}</span>
+            <span className="text-sm font-body text-muted-foreground">+{extraGlasses} bonus 🥤</span>
+            <span className="text-[10px] text-muted-foreground mt-0.5">No XP • No streak</span>
+          </>
+        ) : (
+          <>
+            <span className="text-3xl font-display font-bold text-foreground">{glasses}</span>
+            <span className="text-sm font-body text-muted-foreground">/ {goal} glasses</span>
+          </>
+        )}
       </div>
     </div>
   );
