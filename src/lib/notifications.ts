@@ -12,13 +12,13 @@ export async function setupNotificationActions() {
         id: "HYDRATION_REMINDER",
         actions: [
           {
-            id: "drink_now",
-            title: "💧 Drink Now",
+            id: "drink",
+            title: "💧 Drink",
             foreground: true, // Opens the app
           },
           {
-            id: "remind_later",
-            title: "⏰ Remind in 5 min",
+            id: "snooze",
+            title: "😴 Snooze (5 min)",
             foreground: false,
           },
         ],
@@ -29,7 +29,7 @@ export async function setupNotificationActions() {
   // Listen for action performed
   LocalNotifications.addListener("localNotificationActionPerformed", async (notification) => {
     const actionId = notification.actionId;
-    if (actionId === "remind_later") {
+    if (actionId === "snooze") {
       // Schedule a follow-up notification in 5 minutes
       const remindAt = new Date(Date.now() + 5 * 60 * 1000);
       const quote = getRandomQuote();
@@ -37,7 +37,7 @@ export async function setupNotificationActions() {
         notifications: [
           {
             title: "Hey chief, quick reminder! 💧",
-            body: `You asked to be reminded. ${quote}`,
+            body: `Snooze is over. ${quote}`,
             id: 8888,
             schedule: { at: remindAt },
             sound: undefined,
@@ -48,9 +48,10 @@ export async function setupNotificationActions() {
         ],
       });
     }
-    // "drink_now" with foreground: true will open the app automatically
+    // "drink" with foreground: true will open the app automatically
   });
 }
+
 
 export async function scheduleReminders(
   intervalHours: number,
@@ -73,18 +74,26 @@ export async function scheduleReminders(
   const [bedH] = bedTime.split(":").map(Number);
 
   const notifications = [];
-  for (let i = 1; i <= 16; i++) {
-    const triggerDate = new Date();
-    triggerDate.setHours(triggerDate.getHours() + intervalHours * i);
+  const now = Date.now();
+  
+  // Schedule 64 upcoming reminders to ensure coverage for high-frequency settings
+  // At 5m intervals, this covers ~5.3 hours of notification history
+  for (let i = 1; i <= 64; i++) {
+    const triggerMs = now + (intervalHours * 3600 * 1000 * i);
+    const triggerDate = new Date(triggerMs);
 
     const h = triggerDate.getHours();
+    // Only schedule if within wake/bed hours
     if (h >= wakeH && h <= bedH) {
       const quote = getRandomQuote();
       notifications.push({
         title: `Hey chief, time to hydrate! 💧`,
         body: `Hey ${userName}! ${quote}`,
         id: 1000 + i,
-        schedule: { at: triggerDate },
+        schedule: { 
+          at: triggerDate,
+          allowWhileIdle: true 
+        },
         sound: undefined,
         smallIcon: "ic_stat_icon",
         iconColor: "#4ade80",
@@ -93,10 +102,12 @@ export async function scheduleReminders(
     }
   }
 
+
   if (notifications.length > 0) {
     await LocalNotifications.schedule({ notifications });
   }
 }
+
 
 export async function scheduleWeeklySummary(userName = "chief") {
   if (!Capacitor.isNativePlatform()) return;
@@ -124,10 +135,26 @@ export async function scheduleWeeklySummary(userName = "chief") {
   });
 }
 
-export async function cancelReminders() {
+export async function scheduleSampleNotification() {
   if (!Capacitor.isNativePlatform()) return;
-  const pending = await LocalNotifications.getPending();
-  if (pending.notifications.length > 0) {
-    await LocalNotifications.cancel(pending);
-  }
+
+  // Schedule a notification for 2 seconds from now to test
+  const triggerAt = new Date(Date.now() + 2000);
+  const quote = getRandomQuote();
+
+  await LocalNotifications.schedule({
+    notifications: [
+      {
+        title: "Test: Time to hydrate! 💧",
+        body: `Testing buttons. ${quote}`,
+        id: 7777,
+        schedule: { at: triggerAt },
+        sound: undefined,
+        smallIcon: "ic_stat_icon",
+        iconColor: "#4ade80",
+        actionTypeId: "HYDRATION_REMINDER",
+      },
+    ],
+  });
 }
+

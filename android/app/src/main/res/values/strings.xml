@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Hydration Hero: Water Tracker</string>
+    <string name="title_activity_main">Hydration Hero: Water Tracker</string>
+    <string name="package_name">com.hydrationhero.app</string>
+    <string name="custom_url_scheme">com.hydrationhero.app</string>
+</resources>

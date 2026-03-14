@@ -1,4 +1,4 @@
-import { Minus, Plus, RotateCcw } from "lucide-react";
+import { Minus, Plus, RotateCcw, ShieldCheck, Sparkles, Droplets } from "lucide-react";
 import type { WaterSettings } from "@/lib/water-store";
 import type { UserProfile } from "@/lib/user-profile";
 import { Button } from "@/components/ui/button";
@@ -13,12 +13,18 @@ interface SettingsPageProps {
   resetProgress: () => void;
   profile: UserProfile;
   updateProfile: (p: Partial<UserProfile>) => void;
+  setPremium: (status: boolean) => void;
+  purchaseRemoveAds: () => Promise<void>;
+  restorePurchases: () => Promise<void>;
 }
+
 
 const INTERVALS = [0.5, 1, 1.5, 2, 3];
 
-export default function SettingsPage({ settings, updateSettings, resetProgress, profile, updateProfile }: SettingsPageProps) {
+export default function SettingsPage({ settings, updateSettings, resetProgress, profile, updateProfile, setPremium, purchaseRemoveAds, restorePurchases }: SettingsPageProps) {
   const [showReset, setShowReset] = useState(false);
+  const [purchasing, setPurchasing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
 
   return (
     <div className="px-4 pt-6 pb-24 max-w-md mx-auto">
@@ -30,6 +36,69 @@ export default function SettingsPage({ settings, updateSettings, resetProgress, 
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">Dark Mode</span>
           <ThemeToggle />
+        </div>
+      </div>
+
+      {/* Monetization */}
+      <div className="rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 p-5 mb-4 relative overflow-hidden">
+        <div className="flex flex-col gap-2 relative z-10">
+          <div className="flex items-center gap-2">
+            <Sparkles className="text-primary" size={18} />
+            <h2 className="font-display font-bold text-sm text-foreground">Remove Ads</h2>
+          </div>
+          
+          <p className="text-xs text-muted-foreground">
+            {profile.isPremium 
+              ? "You are a Premium Hero! Ads are removed forever. ✨" 
+              : "Enjoy Hydration Hero without ads."}
+          </p>
+
+          {!profile.isPremium ? (
+            <div className="flex flex-col gap-2 mt-2">
+              <Button 
+                onClick={async () => {
+                  setPurchasing(true);
+                  try {
+                    await purchaseRemoveAds();
+                    // Premium granted via billing callback — no manual setPremium needed
+                  } catch {
+                    toast.error("Purchase failed. Please try again.");
+                  } finally {
+                    setPurchasing(false);
+                  }
+                }}
+                disabled={purchasing}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl"
+              >
+                {purchasing ? "Opening Store..." : "Remove Ads — $1.99"}
+              </Button>
+              <button
+                onClick={async () => {
+                  setRestoring(true);
+                  try {
+                    await restorePurchases();
+                    toast.success("Purchases restored! ✅");
+                  } catch {
+                    toast.error("Restore failed.");
+                  } finally {
+                    setRestoring(false);
+                  }
+                }}
+                disabled={restoring}
+                className="text-xs text-muted-foreground underline"
+              >
+                {restoring ? "Restoring..." : "Restore previous purchase"}
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 text-primary text-sm font-bold mt-1">
+              <ShieldCheck size={16} />
+              Hero Pro Active
+            </div>
+          )}
+        </div>
+        <div className="absolute -right-4 -bottom-4 opacity-10">
+          <Droplets size={100} className="text-primary" />
         </div>
       </div>
 
@@ -80,27 +149,30 @@ export default function SettingsPage({ settings, updateSettings, resetProgress, 
         </div>
         <h2 className="font-display font-bold text-sm mb-2 text-foreground">Reminder Frequency</h2>
         <div className="flex gap-2 flex-wrap">
-          {INTERVALS.map(h => (
-            <button
-              key={h}
-              onClick={() => {
-                updateProfile({ notificationFrequency: h });
-                scheduleReminders(h, profile.wakeTime, profile.bedTime, profile.name);
-                scheduleWeeklySummary(profile.name);
-                toast.success(`Reminders set to every ${h < 1 ? `${h * 60} minutes` : `${h} hour${h > 1 ? 's' : ''}`} ⏰`);
-              }}
-              className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all border ${
-                profile.notificationFrequency === h
-                  ? "bg-secondary text-secondary-foreground border-secondary shadow-md"
-                  : "bg-muted text-muted-foreground border-border"
-              }`}
-            >
-              {h < 1 ? `${h * 60}m` : `${h}h`}
-            </button>
-          ))}
+          {INTERVALS.map(h => {
+            const minutes = Math.round(h * 60);
+            return (
+              <button
+                key={h}
+                onClick={() => {
+                  updateProfile({ notificationFrequency: h });
+                  scheduleReminders(h, profile.wakeTime, profile.bedTime, profile.name);
+                  scheduleWeeklySummary(profile.name);
+                  toast.success(`Reminders set to every ${h < 1 ? `${minutes} minutes` : `${h} hour${h > 1 ? 's' : ''}`} ⏰`);
+                }}
+                className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all border ${
+                  profile.notificationFrequency === h
+                    ? "bg-secondary text-secondary-foreground border-secondary shadow-md"
+                    : "bg-muted text-muted-foreground border-border"
+                }`}
+              >
+                {h < 1 ? `${minutes}m` : `${h}h`}
+              </button>
+            );
+          })}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">Notifications work on native builds (iOS/Android)</p>
       </div>
+
 
       {/* Reset */}
       <div className="rounded-2xl bg-card border border-destructive/20 p-5">

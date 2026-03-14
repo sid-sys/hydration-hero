@@ -37,6 +37,7 @@ export default function OnboardingPage({ onComplete }: OnboardingPageProps) {
         notificationFrequency: frequency,
         onboardingComplete: true,
         bodyWeight: weight,
+        isPremium: false,
       });
     }
   };
@@ -253,11 +254,9 @@ export default function OnboardingPage({ onComplete }: OnboardingPageProps) {
                   </button>
                 ))}
               </div>
-              <p className="text-[10px] text-muted-foreground mt-3">
-                Notifications work on native builds (iOS/Android)
-              </p>
             </div>
           )}
+
         </motion.div>
       </AnimatePresence>
 

@@ -49,6 +49,11 @@ export default function StreaksPage({ streak, bestStreak, level, badges, history
   const [viewYear, setViewYear] = useState(now.getFullYear());
 
   const calendarDays = getCalendarDays(viewYear, viewMonth, history);
+  
+  // Calculate completion percentage for the ring
+  const completedDays = calendarDays.filter(d => d.inMonth && d.completed).length;
+  const totalDaysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const completionPercentage = (completedDays / totalDaysInMonth) * 100;
 
   const prevMonth = () => {
     if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
@@ -66,30 +71,54 @@ export default function StreaksPage({ streak, bestStreak, level, badges, history
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", duration: 0.5 }}
-        className="flex flex-col items-center mb-4"
+        className="flex flex-col items-center mb-10"
       >
-        <div className="relative w-24 h-24 flex items-center justify-center mb-3">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-b from-coral to-sunshine opacity-20" />
-          <Flame size={48} className="text-coral z-10" />
-          <span className="absolute text-2xl font-display font-black text-foreground z-10 mt-2">{streak}</span>
+        <div className="relative w-32 h-32 flex items-center justify-center mb-6">
+          {/* Main Ring */}
+          <div className="absolute inset-0 rounded-full border-[6px] border-orange-500/10" />
+          <svg className="absolute inset-0 w-full h-full -rotate-90">
+            <circle
+              cx="64"
+              cy="64"
+              r="61"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="6"
+              strokeDasharray={2 * Math.PI * 61}
+              strokeDashoffset={2 * Math.PI * 61 * (1 - completionPercentage / 100)}
+              className="text-orange-500 transition-all duration-1000 ease-out"
+              strokeLinecap="round"
+            />
+          </svg>
+          
+          {/* Flame on top */}
+          <div className="absolute -top-6 bg-background p-1 rounded-full border border-orange-900/20 shadow-lg">
+            <Flame size={32} className="text-orange-500 fill-orange-500" />
+          </div>
+
+          <div className="flex flex-col items-center">
+            <span className="text-5xl font-display font-black text-foreground">{streak}</span>
+            <span className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase mt-[-4px]">Days</span>
+          </div>
         </div>
-        <h1 className="font-display text-xl font-bold text-foreground">
+        
+        <h1 className="font-display text-2xl font-black text-foreground tracking-tight">
           {streak > 0 ? "Keep up your streak!" : "Start your streak!"}
         </h1>
-        <p className="text-xs text-muted-foreground mt-1">Best: {bestStreak} days • Level {level}</p>
+        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1 opacity-60">Best: {bestStreak} days • Level {level}</p>
       </motion.div>
 
       {/* Calendar */}
       <div className="rounded-2xl bg-card border border-border p-4 mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <button onClick={prevMonth} className="p-1 rounded-lg hover:bg-muted transition-colors">
-            <ChevronLeft size={18} className="text-muted-foreground" />
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={prevMonth} className="p-1.5 rounded-full hover:bg-muted transition-colors">
+            <ChevronLeft size={20} className="text-muted-foreground" />
           </button>
-          <span className="font-display font-bold text-sm text-foreground">
+          <span className="font-display font-black text-sm text-foreground uppercase tracking-widest">
             {MONTHS[viewMonth]} {viewYear}
           </span>
-          <button onClick={nextMonth} className="p-1 rounded-lg hover:bg-muted transition-colors">
-            <ChevronRight size={18} className="text-muted-foreground" />
+          <button onClick={nextMonth} className="p-1.5 rounded-full hover:bg-muted transition-colors">
+            <ChevronRight size={20} className="text-muted-foreground" />
           </button>
         </div>
 
@@ -99,25 +128,31 @@ export default function StreaksPage({ streak, bestStreak, level, badges, history
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-1">
-          {calendarDays.map((cell, i) => (
-            <div key={i} className="flex items-center justify-center aspect-square">
-              {cell.inMonth ? (
-                <motion.div
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: i * 0.008 }}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                    cell.completed
-                      ? "bg-gradient-to-br from-coral to-sunshine text-white shadow-sm"
-                      : cell.isToday
-                      ? "ring-2 ring-primary text-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {cell.completed ? "🔥" : cell.day}
-                </motion.div>
-              ) : null}
+        <div className="flex flex-col gap-2">
+          {Array.from({ length: Math.ceil(calendarDays.length / 7) }).map((_, rowIndex) => (
+            <div key={rowIndex} className="relative h-11 w-full rounded-full bg-orange-950/20 border border-orange-900/10 flex items-center p-1">
+              <div className="grid grid-cols-7 w-full h-full">
+                {calendarDays.slice(rowIndex * 7, rowIndex * 7 + 7).map((cell, i) => (
+                  <div key={i} className="flex items-center justify-center h-full">
+                    {cell.inMonth ? (
+                      <div className="relative flex items-center justify-center w-8 h-8">
+                        {cell.completed ? (
+                          <div className="flex items-center justify-center relative w-full h-full">
+                            <Flame size={32} className="text-orange-500 stroke-[2px]" />
+                            <span className="absolute inset-0 flex items-center justify-center text-[11px] font-black mt-1 text-foreground">
+                              {cell.day}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className={`text-xs font-heavy ${cell.isToday ? "text-orange-500 font-bold underline underline-offset-4" : "text-muted-foreground font-bold"}`}>
+                            {cell.day}
+                          </span>
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell } from "recharts";
-import { CheckCircle2, XCircle, Droplets } from "lucide-react";
+import { CheckCircle2, XCircle, Droplets, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import type { DayRecord, WaterSettings, DrinkEvent } from "@/lib/water-store";
 
@@ -34,10 +34,10 @@ export default function HistoryPage({ history, todayGlasses, todayDate, bestStre
     return all.slice(-30);
   }, [history, todayGlasses, todayDate, settings.dailyGoal]);
 
-  // Group drink log by date, most recent first
+  // Show last 10 drink events, most recent first
   const recentDrinks = useMemo(() => {
     const sorted = [...drinkLog].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-    return sorted.slice(0, 20); // Show last 20 events
+    return sorted.slice(0, 10);
   }, [drinkLog]);
 
   return (
@@ -51,7 +51,7 @@ export default function HistoryPage({ history, todayGlasses, todayDate, bestStre
           <p className="text-xs text-muted-foreground">Best Streak</p>
         </div>
         <div className="rounded-2xl bg-card border border-border p-4 text-center">
-          <p className="font-display text-2xl font-bold text-secondary">{totalGlasses}</p>
+          <p className="font-display text-2xl font-bold text-primary">{totalGlasses}</p>
           <p className="text-xs text-muted-foreground">Total Glasses</p>
         </div>
       </div>
@@ -65,14 +65,14 @@ export default function HistoryPage({ history, todayGlasses, todayDate, bestStre
             <YAxis hide />
             <Bar dataKey="glasses" radius={[8, 8, 0, 0]}>
               {last7.map((entry, i) => (
-                <Cell key={i} fill={entry.goal ? "hsl(142, 55%, 45%)" : "hsl(200, 80%, 55%)"} />
+                <Cell key={i} fill={entry.goal ? "hsl(221, 83%, 53%)" : "hsl(210, 40%, 80%)"} />
               ))}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
         <div className="flex gap-4 justify-center mt-2 text-[10px] text-muted-foreground">
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary inline-block" /> Goal met</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-secondary inline-block" /> In progress</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-muted-foreground/40 inline-block" /> In progress</span>
         </div>
       </div>
 
@@ -96,8 +96,8 @@ export default function HistoryPage({ history, todayGlasses, todayDate, bestStre
         ))}
       </div>
 
-      {/* Drink Activity Log */}
-      <h2 className="font-display text-lg font-bold mb-3">Recent Activity 💧</h2>
+      {/* Water Logger */}
+      <h2 className="font-display text-lg font-bold mb-3">Water Logger 💧</h2>
       <div className="rounded-2xl bg-card border border-border overflow-hidden">
         {recentDrinks.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-6">No drinks logged yet. Start hydrating!</p>
@@ -112,6 +112,7 @@ export default function HistoryPage({ history, todayGlasses, todayDate, bestStre
 
               const dayLabel = isToday ? "Today" : isYesterday ? "Yesterday" : date.toLocaleDateString("en", { month: "short", day: "numeric" });
               const timeLabel = date.toLocaleTimeString("en", { hour: "numeric", minute: "2-digit", hour12: true });
+              const isExtra = event.isExtraSip;
 
               return (
                 <motion.div
@@ -121,11 +122,18 @@ export default function HistoryPage({ history, todayGlasses, todayDate, bestStre
                   transition={{ delay: i * 0.03 }}
                   className="flex items-center gap-3 px-4 py-3"
                 >
-                  <div className="w-8 h-8 rounded-full bg-secondary/15 flex items-center justify-center flex-shrink-0">
-                    <Droplets size={16} className="text-secondary" />
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    isExtra ? "bg-amber-400/15" : "bg-primary/10"
+                  }`}>
+                    {isExtra
+                      ? <Star size={16} className="text-amber-500" />
+                      : <Droplets size={16} className="text-primary" />
+                    }
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">Drank 1 Glass</p>
+                    <p className={`text-sm font-semibold ${isExtra ? "text-amber-500" : "text-foreground"}`}>
+                      {isExtra ? "Extra Sip +250ml ⭐" : "Drank 1 Glass"}
+                    </p>
                     <p className="text-[11px] text-muted-foreground">{dayLabel} • {timeLabel}</p>
                   </div>
                 </motion.div>

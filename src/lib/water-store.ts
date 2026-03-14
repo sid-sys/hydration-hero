@@ -11,6 +11,7 @@ export interface DrinkEvent {
   id: string;
   timestamp: string; // ISO string
   date: string; // YYYY-MM-DD
+  isExtraSip: boolean; // true when glasses already >= dailyGoal
 }
 
 export interface Badge {
@@ -48,8 +49,10 @@ export interface WaterState {
   garden: PlantEntry[];
   settings: WaterSettings;
   drinkLog: DrinkEvent[];
-  lastDrinkTime: string | null; // ISO string for cooldown
+  lastDrinkTime: string | null;
+  isPremium: boolean;
 }
+
 
 const STREAK_MILESTONES = [3, 7, 14, 21, 30, 50, 100];
 
@@ -86,6 +89,7 @@ function getDefaultState(): WaterState {
     settings: { dailyGoal: 8, cupSize: "medium", reminderInterval: 2 },
     drinkLog: [],
     lastDrinkTime: null,
+    isPremium: false,
   };
 }
 
@@ -97,6 +101,7 @@ function loadState(): WaterState {
     // Ensure new fields
     if (!state.drinkLog) state.drinkLog = [];
     if (!state.lastDrinkTime) state.lastDrinkTime = null;
+    if (state.isPremium === undefined) state.isPremium = false;
     // Check if day changed
     const today = getToday();
     if (state.todayDate !== today) {
@@ -175,7 +180,7 @@ export function useWaterStore() {
     let milestone: number | null = null;
 
     setState(prev => {
-      // Check cooldown
+      // Enforce 5-minute cooldown between drinks
       if (isOnCooldown(prev.lastDrinkTime)) return prev;
 
       const next = { ...prev };
@@ -184,11 +189,12 @@ export function useWaterStore() {
       next.totalGlasses += 1;
       next.lastDrinkTime = new Date().toISOString();
 
-      // Add drink event to log
+      // Add drink event to log (mark extra sips beyond goal)
       next.drinkLog = [...next.drinkLog, {
         id: `drink_${Date.now()}`,
         timestamp: new Date().toISOString(),
         date: getToday(),
+        isExtraSip: alreadyMetGoal,
       }];
 
       // Only award XP if goal not yet met
@@ -239,6 +245,25 @@ export function useWaterStore() {
     setState(fresh);
   }, []);
 
+  const resetAll = useCallback(() => {
+    // Read premium status first so paid users keep ad-free after reset
+    let preserved_isPremium = false;
+    try {
+      const raw = localStorage.getItem("water_user_profile");
+      if (raw) preserved_isPremium = JSON.parse(raw)?.isPremium === true;
+    } catch { /* ignore */ }
+
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem("water_user_profile");
+    const fresh = getDefaultState();
+    fresh.isPremium = preserved_isPremium;
+    setState(fresh);
+  }, []);
+
+  const setPremium = useCallback((status: boolean) => {
+    setState(prev => ({ ...prev, isPremium: status }));
+  }, []);
+
   // Check streak badges
   useEffect(() => {
     setState(prev => {
@@ -258,5 +283,5 @@ export function useWaterStore() {
   const progress = Math.min(state.todayGlasses / state.settings.dailyGoal, 1);
   const goalMet = state.todayGlasses >= state.settings.dailyGoal;
 
-  return { ...state, progress, goalMet, drinkWater, updateSettings, resetProgress };
+  return { ...state, progress, goalMet, drinkWater, updateSettings, resetProgress, resetAll, setPremium };
 }

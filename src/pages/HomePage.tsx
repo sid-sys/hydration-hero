@@ -7,7 +7,11 @@ import { getPlantStage, xpForLevel } from "@/lib/water-store";
 import { playDrinkSound, playGoalSound } from "@/lib/sounds";
 import { triggerHaptic } from "@/lib/haptics";
 import confetti from "canvas-confetti";
+import { scheduleSampleNotification } from "@/lib/notifications";
+import { showInterstitial } from "@/lib/admob";
 import { useEffect, useRef, useCallback } from "react";
+
+
 import { toast } from "sonner";
 
 interface HomePageProps {
@@ -21,14 +25,15 @@ interface HomePageProps {
   drinkWater: () => { streakMilestone: number | null };
   userName?: string;
   lastDrinkTime: string | null;
+  isPremium: boolean;
 }
 
-export default function HomePage({ todayGlasses, settings, progress, goalMet, streak, level, xp, drinkWater, userName, lastDrinkTime }: HomePageProps) {
+export default function HomePage({ todayGlasses, settings, progress, goalMet, streak, level, xp, drinkWater, userName, lastDrinkTime, isPremium }: HomePageProps) {
   const prevGoalMet = useRef(goalMet);
 
   useEffect(() => {
     if (goalMet && !prevGoalMet.current) {
-      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ["#4ade80", "#38bdf8", "#fbbf24", "#f472b6"] });
+      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ["#3b82f6", "#38bdf8", "#fbbf24", "#f472b6"] });
       playGoalSound();
       triggerHaptic();
     }
@@ -39,7 +44,18 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
     playDrinkSound();
     triggerHaptic();
     const result = drinkWater();
+    
+    // Trigger interstitial ad for non-premium users
+    if (!isPremium) {
+      showInterstitial();
+    }
+    
+    // Trigger test notification 2 seconds after drinking - Removed as per user request
+    // scheduleSampleNotification();
+
+
     if (result.streakMilestone) {
+
       setTimeout(() => {
         confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 }, colors: ["#f97316", "#eab308", "#ef4444", "#fbbf24"] });
         triggerHaptic();
@@ -67,6 +83,13 @@ export default function HomePage({ todayGlasses, settings, progress, goalMet, st
       </div>
 
       <SplashButton onClick={handleDrink} lastDrinkTime={lastDrinkTime} />
+      
+      <p className="mt-2 text-xs font-medium text-muted-foreground">
+        Daily Goal: <span className="text-foreground">{settings.dailyGoal}</span> glasses 
+        <span className="ml-1 text-foreground">
+          {(settings.dailyGoal * 0.24).toFixed(1)} to {(settings.dailyGoal * 0.25).toFixed(1)} litres
+        </span>
+      </p>
 
       <AnimatePresence>
         {goalMet && (

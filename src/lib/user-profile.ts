@@ -5,7 +5,8 @@ export interface UserProfile {
   bedTime: string; // HH:MM
   notificationFrequency: number; // hours
   onboardingComplete: boolean;
-  bodyWeight?: number; // kg, for calculation
+  bodyWeight?: number;
+  isPremium: boolean;
 }
 
 const PROFILE_KEY = "water_user_profile";
@@ -17,6 +18,7 @@ const DEFAULT_PROFILE: UserProfile = {
   bedTime: "22:00",
   notificationFrequency: 2,
   onboardingComplete: false,
+  isPremium: false,
 };
 
 export function loadProfile(): UserProfile {
