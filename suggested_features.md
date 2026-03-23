@@ -142,9 +142,10 @@
 - **Description**: Required by Google/Apple for users in the EU to consent to ad tracking and data collection.
 - **Implementation**: Integrate `User Messaging Platform (UMP)` SDK via Capacitor.
 
-### 8. Privacy Policy Integration
+### 8. Privacy Policy Integration ✅
 - **Description**: A dedicated screen and hosted URL for the mandatory Privacy Policy required by app stores.
-- **Implementation**: Create a `/privacy` route and link it from the Settings page.
+- **Implementation**: `docs/privacy-policy.html` created and hosted on GitHub Pages at `https://sid-sys.github.io/hydration-hero/privacy-policy.html`.
+- **Implemented**: March 23, 2026
 
 
 ---
@@ -172,3 +173,22 @@ Here are 3 more features/upgrades to consider for production:
 ### 3. OLED/Dark Mode Optimization
 - **Description**: Many mobile users prefer dark mode. The plant vibrant colors must be tuned to look premium against true-black backgrounds.
 - **Implementation**: Implement theme-aware SVG adjustments for the `PlantMascot` to maintain visual quality in Dark Mode.
+
+---
+
+## 🆕 Latest Suggestions (March 23, 2026)
+
+### 1. In-App Privacy Policy Webview Link
+- **Description**: Add a tappable "Privacy Policy" link in the Settings page that opens the hosted GitHub Pages URL in an in-app browser.
+- **Benefit**: Required for Google Play & App Store submissions. Keeps users in-app.
+- **Implementation**: Use `@capacitor/browser` to open `https://sid-sys.github.io/hydration-hero/privacy-policy.html`.
+
+### 2. Google User Messaging Platform (UMP) Consent Flow
+- **Description**: Required by Google AdMob for EU/EEA users under GDPR. Show a consent dialog before loading ads.
+- **Benefit**: Avoids app suspension from Google Play; legally required for monetized apps in EU.
+- **Implementation**: Integrate `@capacitor-community/google-ump` and show the consent form on first launch.
+
+### 3. Terms of Service (ToS) Page
+- **Description**: Similar to the Privacy Policy hosted on GitHub Pages, create a Terms of Service document.
+- **Benefit**: Required by app stores and protects against misuse. Needed when processing real payments (IAP).
+- **Implementation**: Create `docs/terms.html` alongside the privacy policy and push to the same GitHub Pages site.
