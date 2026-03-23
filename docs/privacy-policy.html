@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy – Hydration Hero: Water Tracker</title>
+  <meta name="description" content="Privacy Policy for Hydration Hero: Water Tracker. Learn how we handle your data." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --bg-card: #161b22;
+      --bg-card2: #1c2230;
+      --border: rgba(99, 179, 237, 0.15);
+      --blue: #60a5fa;
+      --blue-light: #93c5fd;
+      --cyan: #22d3ee;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #0ea5e9;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+
+    /* ─── Header ─────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #0a1628 0%, #0d1f3c 50%, #0a1628 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 24px 56px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(6,182,212,0.18), transparent);
+      pointer-events: none;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .logo-icon {
+      width: 52px; height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #0ea5e9, #22d3ee);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      box-shadow: 0 0 32px rgba(6,182,212,0.35);
+    }
+    .logo-text {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .logo-text span { color: var(--cyan); }
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.03em;
+      margin-bottom: 10px;
+    }
+    header p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      letter-spacing: 0.01em;
+    }
+    .badge {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 4px 14px;
+      border-radius: 999px;
+      background: rgba(14,165,233,0.15);
+      border: 1px solid rgba(14,165,233,0.3);
+      color: var(--blue-light);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── Layout ──────────────────────────────────────────── */
+    main {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ─── TOC ─────────────────────────────────────────────── */
+    .toc {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 40px;
+    }
+    .toc h2 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--cyan);
+      margin-bottom: 14px;
+    }
+    .toc ol {
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+    }
+    .toc li a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .toc li a:hover { color: var(--blue-light); }
+
+    /* ─── Section Cards ───────────────────────────────────── */
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      transition: border-color 0.25s;
+    }
+    .section:hover { border-color: rgba(99,179,237,0.3); }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .section-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .icon-blue  { background: rgba(96,165,250,0.15); }
+    .icon-cyan  { background: rgba(34,211,238,0.15); }
+    .icon-green { background: rgba(52,211,153,0.15); }
+    .icon-red   { background: rgba(248,113,113,0.15); }
+    .icon-purple{ background: rgba(167,139,250,0.15); }
+    .icon-yellow{ background: rgba(251,191,36,0.15); }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      letter-spacing: -0.01em;
+    }
+    .section h2 .num {
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* ─── Typography inside sections ─────────────────────── */
+    .section p { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 12px; }
+    .section p:last-child { margin-bottom: 0; }
+    .section ul, .section ol {
+      padding-left: 20px; color: var(--text-muted); font-size: 0.92rem;
+      display: grid; gap: 6px;
+    }
+    .section ul li::marker { color: var(--accent); }
+    .section strong { color: var(--text); font-weight: 500; }
+    .section a { color: var(--blue-light); text-decoration: none; }
+    .section a:hover { text-decoration: underline; }
+
+    /* ─── Highlight box ───────────────────────────────────── */
+    .highlight {
+      background: rgba(14,165,233,0.08);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+      color: var(--blue-light);
+    }
+
+    /* ─── Contact card ────────────────────────────────────── */
+    .contact-card {
+      background: linear-gradient(135deg, rgba(14,165,233,0.1), rgba(34,211,238,0.06));
+      border: 1px solid rgba(14,165,233,0.3);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .contact-card p { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 10px; }
+    .contact-card a {
+      display: inline-block;
+      background: linear-gradient(135deg, #0ea5e9, #22d3ee);
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 24px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 6px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .contact-card a:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* ─── Footer ──────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+    footer a { color: var(--blue-light); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">💧</div>
+    <div class="logo-text">Hydration <span>Hero</span></div>
+  </div>
+  <h1>Privacy Policy</h1>
+  <p class="subtitle">Hydration Hero: Water Tracker</p>
+  <div class="badge">Last updated: March 23, 2025</div>
+</header>
+
+<main>
+
+  <!-- Intro -->
+  <div class="section" style="border-color: rgba(14,165,233,0.25);">
+    <p>
+      Welcome to <strong>Hydration Hero: Water Tracker</strong> ("we," "our," or "us"). We are committed to protecting your privacy.
+      This Privacy Policy describes how we handle information when you use our app.
+    </p>
+    <div class="highlight">
+      📱 <strong>Hydration Hero is designed to work entirely on your device.</strong> We do not collect, store, or transmit any personal data to our servers.
+    </div>
+    <p>
+      By using the app, you agree to the practices described in this policy.
+    </p>
+  </div>
+
+  <!-- Table of Contents -->
+  <div class="toc">
+    <h2>📋 Table of Contents</h2>
+    <ol>
+      <li><a href="#no-data">Information We Do Not Collect</a></li>
+      <li><a href="#local-storage">Data Stored Locally on Your Device</a></li>
+      <li><a href="#admob">Third-Party Advertising (AdMob)</a></li>
+      <li><a href="#notifications">Local Notifications</a></li>
+      <li><a href="#children">Children's Privacy</a></li>
+      <li><a href="#your-rights">Your Rights & Data Deletion</a></li>
+      <li><a href="#changes">Changes to This Policy</a></li>
+      <li><a href="#contact">Contact Us</a></li>
+    </ol>
+  </div>
+
+  <!-- 1. Information We Do Not Collect -->
+  <div class="section" id="no-data">
+    <div class="section-header">
+      <div class="section-icon icon-green">🚫</div>
+      <h2><span class="num">01.</span> Information We Do Not Collect</h2>
+    </div>
+    <p>We do not collect any personal information. Specifically, we do <strong>not</strong> collect:</p>
+    <ul>
+      <li>Your name, email address, or account information</li>
+      <li>Your location or GPS data</li>
+      <li>Your device contacts or photos</li>
+      <li>Health or fitness data beyond what you manually enter</li>
+      <li>Any analytics, crash reports, or usage telemetry from our side</li>
+    </ul>
+  </div>
+
+  <!-- 2. Local Storage -->
+  <div class="section" id="local-storage">
+    <div class="section-header">
+      <div class="section-icon icon-blue">📦</div>
+      <h2><span class="num">02.</span> Data Stored Locally on Your Device</h2>
+    </div>
+    <p>
+      Hydration Hero stores all your data <strong>exclusively on your device</strong> using the device's local storage
+      (e.g., <code>localStorage</code>). This includes:
+    </p>
+    <ul>
+      <li>Your daily water intake logs</li>
+      <li>Personal hydration goals and targets</li>
+      <li>Drink type preferences and custom drink sizes</li>
+      <li>Calendar and streak history</li>
+      <li>App settings and preferences</li>
+    </ul>
+    <p>
+      This data never leaves your device and is not accessible by us or any third party (except where
+      your device operating system permits — e.g., device backups).
+    </p>
+    <div class="highlight">
+      🔐 You are in full control of your data. You can delete it at any time by clearing the app's data or uninstalling the app.
+    </div>
+  </div>
+
+  <!-- 3. AdMob -->
+  <div class="section" id="admob">
+    <div class="section-header">
+      <div class="section-icon icon-yellow">📣</div>
+      <h2><span class="num">03.</span> Third-Party Advertising (Google AdMob)</h2>
+    </div>
+    <p>
+      Hydration Hero uses <strong>Google AdMob</strong> to display advertisements. AdMob may collect and use certain
+      information on your device to serve personalized or non-personalized ads. This may include:
+    </p>
+    <ul>
+      <li>Advertising ID (IDFA / GAID)</li>
+      <li>Device information (type, OS version)</li>
+      <li>Coarse location (country/region level, if permitted by your OS)</li>
+      <li>Ad interaction and click data</li>
+    </ul>
+    <p>
+      AdMob's data collection is governed by <strong>Google's Privacy Policy</strong>:
+      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>
+    </p>
+    <p>
+      You can opt out of personalized advertising by adjusting your device settings:
+    </p>
+    <ul>
+      <li><strong>Android:</strong> Settings → Google → Ads → Opt out of Ads Personalization</li>
+      <li><strong>iOS:</strong> Settings → Privacy → Tracking → Disable for this app</li>
+    </ul>
+  </div>
+
+  <!-- 4. Notifications -->
+  <div class="section" id="notifications">
+    <div class="section-header">
+      <div class="section-icon icon-cyan">🔔</div>
+      <h2><span class="num">04.</span> Local Notifications</h2>
+    </div>
+    <p>
+      With your permission, Hydration Hero schedules <strong>local notifications</strong> to remind you to drink water.
+      These notifications are:
+    </p>
+    <ul>
+      <li>Generated and stored entirely on your device</li>
+      <li>Never sent to or from any server</li>
+      <li>Fully controllable through your device's Notification Settings</li>
+    </ul>
+    <p>
+      You can enable or disable notifications at any time in your device's settings or within the app.
+    </p>
+  </div>
+
+  <!-- 5. Children -->
+  <div class="section" id="children">
+    <div class="section-header">
+      <div class="section-icon icon-purple">👶</div>
+      <h2><span class="num">05.</span> Children's Privacy</h2>
+    </div>
+    <p>
+      Hydration Hero is intended for general audiences and is not specifically directed at children under 13.
+      Since we do not collect any personal data, there is no risk of inadvertent collection of children's data
+      through our services.
+    </p>
+    <p>
+      Our advertising partner Google AdMob provides options to configure ads as non-personalized for all users.
+      If you are a parent or guardian with concerns, please contact us using the information below.
+    </p>
+  </div>
+
+  <!-- 6. Your Rights -->
+  <div class="section" id="your-rights">
+    <div class="section-header">
+      <div class="section-icon icon-green">⚖️</div>
+      <h2><span class="num">06.</span> Your Rights &amp; Data Deletion</h2>
+    </div>
+    <p>
+      Because all data is stored locally on your device and we collect no personal information, you
+      have full and immediate control over your data:
+    </p>
+    <ul>
+      <li><strong>Access:</strong> All data is visible to you within the app.</li>
+      <li><strong>Delete:</strong> Use the "Reset All Data" option in app settings, or uninstall the app.</li>
+      <li><strong>Export:</strong> Your data remains on your device and is not held by us.</li>
+      <li><strong>GDPR / CCPA:</strong> Since we hold no personal data on our servers, there is nothing to request, transfer, or erase from our end.</li>
+    </ul>
+  </div>
+
+  <!-- 7. Changes -->
+  <div class="section" id="changes">
+    <div class="section-header">
+      <div class="section-icon icon-blue">📝</div>
+      <h2><span class="num">07.</span> Changes to This Policy</h2>
+    </div>
+    <p>
+      We may update this Privacy Policy from time to time. When we do, we will update the "Last updated" date at
+      the top of this page. We encourage you to review this policy periodically.
+    </p>
+    <p>
+      Continued use of the app after any changes constitutes your acceptance of the updated policy.
+    </p>
+  </div>
+
+  <!-- 8. Contact -->
+  <div class="contact-card" id="contact">
+    <div style="font-size: 2rem; margin-bottom: 12px;">📬</div>
+    <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; color: #e2e8f0;">Contact Us</h2>
+    <p>
+      Have questions about this Privacy Policy or how your data is handled?
+      We're happy to help.
+    </p>
+    <p>
+      Reach us at: <strong style="color: var(--blue-light);">support@hydrationheroapp.com</strong>
+    </p>
+    <a href="mailto:support@hydrationheroapp.com">Send Us an Email</a>
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2025 Hydration Hero: Water Tracker. All rights reserved.</p>
+  <p style="margin-top: 6px;">
+    <a href="https://sid-sys.github.io/hydration-hero/privacy-policy.html">View Online</a>
+    &nbsp;·&nbsp;
+    App ID: <code style="color: var(--text-muted);">com.hydrationhero.app</code>
+  </p>
+</footer>
+
+</body>
+</html>
